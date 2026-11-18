@@ -4,7 +4,7 @@ import { markPaid } from '../settle.js';
 import { Avatar } from './ui.jsx';
 
 /** "Who do I owe / who owes me" card for the current person, shown on the trip's main screen. */
-export default function MySummary({ me, byId, settlements, currency, code, flash, onPickMe, onEdit, onSeeAll }) {
+export default function MySummary({ me, byId, settlements, currency, code, flash, onPickMe, onEdit }) {
   const [busy, setBusy] = useState(null);
 
   if (!me) {
@@ -55,7 +55,7 @@ export default function MySummary({ me, byId, settlements, currency, code, flash
     <section className="card my-summary">
       <div className="summary-head">
         <h2>Your balance</h2>
-        {settlements.length > 0 && <button className="link-btn" onClick={onSeeAll}>Everyone →</button>}
+        <button className="link-btn small" onClick={onPickMe}>Not you?</button>
       </div>
       {!iOwe.length && !owedToMe.length ? (
         <p className="muted">🎉 You're all settled up.</p>

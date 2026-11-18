@@ -6,7 +6,6 @@ import { navigate } from '../router.js';
 import { Avatar, Toast } from './ui.jsx';
 import WhoAreYou from './WhoAreYou.jsx';
 import PeopleStrip from './PeopleStrip.jsx';
-import MySummary from './MySummary.jsx';
 import ExpenseList from './ExpenseList.jsx';
 import ExpenseForm from './ExpenseForm.jsx';
 import PaymentForm from './PaymentForm.jsx';
@@ -65,7 +64,7 @@ export default function Trip({ code }) {
   };
 
   const stats = useMemo(() => computeBalances(people, entries), [people, entries]);
-  const simplify = trip?.simplify !== false;
+  const simplify = trip?.simplify === true;
   const settlements = useMemo(
     () => (simplify ? suggestSettlements(stats.balances) : pairwiseDebts(entries)),
     [simplify, stats, entries],
@@ -157,19 +156,6 @@ export default function Trip({ code }) {
       </header>
 
       <main>
-        {tab === 'expenses' && people.length > 0 && (
-          <MySummary
-            me={meValid}
-            byId={byId}
-            settlements={settlements}
-            currency={cur}
-            code={code}
-            flash={flash}
-            onPickMe={() => setPicking(true)}
-            onEdit={(preset) => setEditing({ kind: 'payment', preset })}
-            onSeeAll={() => setTab('balances')}
-          />
-        )}
         {tab === 'expenses' && (
           <PeopleStrip people={people} me={meValid} balances={stats.balances} code={code} currency={cur} flash={flash} />
         )}
@@ -196,6 +182,7 @@ export default function Trip({ code }) {
             code={code}
             flash={flash}
             onRecord={(preset) => setEditing({ kind: 'payment', preset })}
+            onPickMe={() => setPicking(true)}
           />
         )}
         {tab === 'people' && (
