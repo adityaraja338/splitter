@@ -1,5 +1,13 @@
 {
   "projects": {
     "default": "splitter-61a04"
+  },
+  "targets": {
+    "splitter-61a04": {
+      "hosting": {
+        "app": ["splitbox"],
+        "legacy": ["splitter-61a04"]
+      }
+    }
   }
 }

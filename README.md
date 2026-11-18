@@ -1,4 +1,4 @@
-# Splitter
+# Splitbox
 
 A free, no-sign-up trip expense splitter (in the spirit of Kittysplit). Frontend-only React app on
 **Firebase Hosting** with **Cloud Firestore** for real-time sync.
@@ -29,7 +29,7 @@ npx firebase login
 npm run deploy     # builds, then deploys hosting + firestore rules
 ```
 
-Live at https://splitter-61a04.web.app. Re-run `npm run deploy` to publish changes.
+Live at https://splitbox.web.app (the old https://splitter-61a04.web.app address redirects there). Re-run `npm run deploy` to publish changes.
 
 ## Local development without a Firebase project
 

@@ -59,9 +59,9 @@ export default function Trip({ code }) {
   useEffect(() => {
     if (trip) {
       rememberTrip(code, trip.name);
-      document.title = `${trip.name} · Splitter`;
+      document.title = `${trip.name} · Splitbox`;
     }
-    return () => { document.title = 'Splitter'; };
+    return () => { document.title = 'Splitbox'; };
   }, [trip?.name, code]);
 
   const people = useMemo(() => trip?.people || [], [trip]);
@@ -89,7 +89,7 @@ export default function Trip({ code }) {
 
   async function share() {
     const url = `${location.origin}/t/${code}`;
-    const text = `Join "${trip.name}" on Splitter to add and track our shared expenses`;
+    const text = `Join "${trip.name}" on Splitbox to add and track our shared expenses`;
     if (navigator.share) {
       try {
         await navigator.share({ title: trip.name, text, url });

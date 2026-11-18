@@ -79,8 +79,8 @@ export default function Home() {
   return (
     <div className="page narrow">
       <header className="hero">
-        <div className="logo">⇆</div>
-        <h1>Splitter</h1>
+        <img className="logo" src="/favicon.svg" alt="" width="56" height="56" />
+        <h1>Splitbox</h1>
         <p className="muted">Track shared trip expenses and see who owes whom. Free, no sign-up — just share the link.</p>
       </header>
 
