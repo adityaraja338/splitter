@@ -1,0 +1,65 @@
+rules_version = '2';
+
+// No-auth model: knowing a trip's code (≈ 1 in 10^12 guess) is what grants access.
+// - Trips can be fetched by code but never listed, so codes can't be enumerated.
+// - Writes are schema-validated so the database can't be filled with junk shapes.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function validTrip(d) {
+      return d.keys().hasOnly(['name', 'currency', 'people', 'createdAt'])
+        && d.name is string && d.name.size() > 0 && d.name.size() <= 80
+        && d.currency is string && d.currency.size() <= 6
+        && d.people is list && d.people.size() <= 100
+        && d.createdAt is timestamp;
+    }
+
+    function validParts(p) {
+      return p is map && p.size() > 0 && p.size() <= 100;
+    }
+
+    function validAmount(a) {
+      return a is int && a > 0 && a < 100000000000;
+    }
+
+    function validEntry(d) {
+      return d.createdAt is timestamp
+        && d.updatedAt == request.time
+        && d.date is string && d.date.size() <= 10
+        && (d.createdBy == null || d.createdBy is string)
+        && validAmount(d.amount)
+        && (
+          (d.type == 'expense'
+            && d.keys().hasOnly(['type', 'title', 'amount', 'paidBy', 'date', 'split', 'createdAt', 'updatedAt', 'createdBy'])
+            && d.title is string && d.title.size() > 0 && d.title.size() <= 100
+            && d.paidBy is string
+            && d.split is map && d.split.mode in ['equal', 'exact', 'shares'] && validParts(d.split.parts))
+          ||
+          (d.type == 'payment'
+            && d.keys().hasOnly(['type', 'from', 'to', 'amount', 'date', 'note', 'createdAt', 'updatedAt', 'createdBy'])
+            && d.from is string && d.to is string && d.from != d.to
+            && d.note is string && d.note.size() <= 100)
+        );
+    }
+
+    match /trips/{code} {
+      allow get: if true;
+      allow list: if false;
+      allow create: if code.matches('^[2-9A-Z]{6,16}$')
+        && validTrip(request.resource.data)
+        && request.resource.data.createdAt == request.time;
+      allow update: if validTrip(request.resource.data)
+        && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if false;
+
+      match /entries/{entryId} {
+        allow read: if true;
+        allow create: if exists(/databases/$(database)/documents/trips/$(code))
+          && validEntry(request.resource.data)
+          && request.resource.data.createdAt == request.time;
+        allow update: if validEntry(request.resource.data);
+        allow delete: if true;
+      }
+    }
+  }
+}
