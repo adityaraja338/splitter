@@ -3,7 +3,7 @@ import { watchTrip, watchEntries } from '../api.js';
 import { computeBalances, formatMoney, suggestSettlements, pairwiseDebts } from '../logic.js';
 import { getMe, setMe as storeMe, rememberTrip } from '../storage.js';
 import { navigate } from '../router.js';
-import { Avatar, Toast } from './ui.jsx';
+import { Avatar, Toast, setTripPeople } from './ui.jsx';
 import WhoAreYou from './WhoAreYou.jsx';
 import PeopleStrip from './PeopleStrip.jsx';
 import ExpenseList from './ExpenseList.jsx';
@@ -66,6 +66,7 @@ export default function Trip({ code }) {
 
   const people = useMemo(() => trip?.people || [], [trip]);
   const byId = useMemo(() => Object.fromEntries(people.map((p) => [p.id, p])), [people]);
+  setTripPeople(people);
   const meValid = me && byId[me] ? me : null;
 
   // Ask who you are on first visit (once people exist)

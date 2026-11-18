@@ -30,8 +30,17 @@ export function Modal({ title, onClose, children, footer }) {
   );
 }
 
-const COLORS = ['#0f766e', '#7c3aed', '#db2777', '#ea580c', '#2563eb', '#65a30d', '#c026d3', '#0891b2', '#b45309', '#4f46e5'];
+// Ordered so neighbouring people in a trip get clearly different hues
+const COLORS = ['#0f766e', '#7c3aed', '#ea580c', '#2563eb', '#db2777', '#65a30d', '#0891b2', '#b45309', '#c026d3', '#4f46e5', '#be123c', '#4d7c0f'];
+
+// Colour by position in the current trip, so people never share a colour (up to 12 people)
+let tripOrder = {};
+export function setTripPeople(people) {
+  tripOrder = Object.fromEntries(people.map((p, i) => [p.id, i]));
+}
+
 export function colorFor(id = '') {
+  if (id in tripOrder) return COLORS[tripOrder[id] % COLORS.length];
   let h = 0;
   for (const ch of id) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
   return COLORS[h % COLORS.length];
