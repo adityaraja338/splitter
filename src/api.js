@@ -34,10 +34,15 @@ export async function tripExists(code) {
   return snap.exists();
 }
 
+/**
+ * onData(trip, { fromCache }): trip is null when the document doesn't exist.
+ * A missing trip with fromCache=true means "couldn't reach the server yet", not "not found".
+ */
 export function watchTrip(code, onData, onError) {
   return onSnapshot(
     tripRef(code),
-    (snap) => onData(snap.exists() ? { code, ...snap.data() } : null),
+    { includeMetadataChanges: true },
+    (snap) => onData(snap.exists() ? { code, ...snap.data() } : null, { fromCache: snap.metadata.fromCache }),
     onError,
   );
 }

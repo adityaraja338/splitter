@@ -20,6 +20,8 @@ const TABS = [
 
 export default function Trip({ code }) {
   const [trip, setTrip] = useState(undefined); // undefined = loading, null = not found
+  const [offline, setOffline] = useState(false); // data shown is only from this device's cache
+  const [slow, setSlow] = useState(false); // still waiting on the server after a while
   const [entries, setEntries] = useState([]);
   const [error, setError] = useState('');
   const [me, setMeState] = useState(() => getMe(code));
@@ -35,9 +37,23 @@ export default function Trip({ code }) {
 
   useEffect(() => {
     const onErr = (e) => setError(e.message || 'Could not load trip');
-    const u1 = watchTrip(code, setTrip, onErr);
+    let offlineTimer;
+    const u1 = watchTrip(
+      code,
+      (t, { fromCache }) => {
+        // Only flag offline if it lasts a few seconds (the first snapshot often comes from cache)
+        clearTimeout(offlineTimer);
+        if (fromCache) offlineTimer = setTimeout(() => setOffline(true), 3000);
+        else setOffline(false);
+        // A cache miss isn't proof the trip doesn't exist: keep waiting for the server.
+        if (t === null && fromCache) return;
+        setTrip(t);
+      },
+      onErr,
+    );
+    const timer = setTimeout(() => setSlow(true), 8000);
     const u2 = watchEntries(code, setEntries, onErr);
-    return () => { u1(); u2(); };
+    return () => { u1(); u2(); clearTimeout(timer); clearTimeout(offlineTimer); };
   }, [code]);
 
   useEffect(() => {
@@ -101,7 +117,23 @@ export default function Trip({ code }) {
       </div>
     );
   }
-  if (trip === undefined) return <div className="page narrow"><div className="spinner" aria-label="Loading" /></div>;
+  if (trip === undefined) {
+    return (
+      <div className="page narrow">
+        <div className="spinner" aria-label="Loading" />
+        {(slow || offline) && (
+          <div className="card center">
+            <h2>Can't reach the server</h2>
+            <p className="muted">
+              Still trying to load trip <span className="mono">{code}</span>. Check your internet connection. If you're on
+              mobile data, try Wi-Fi (or the other way round).
+            </p>
+            <button className="btn primary top-gap" onClick={() => location.reload()}>Try again</button>
+          </div>
+        )}
+      </div>
+    );
+  }
   if (trip === null) {
     return (
       <div className="page narrow">
@@ -119,6 +151,11 @@ export default function Trip({ code }) {
 
   return (
     <div className="page">
+      {offline && (
+        <div className="offline-banner" role="status">
+          Offline: showing saved data. Changes you make will sync when you're back online.
+        </div>
+      )}
       <header className="trip-head">
         <button className="link-btn back" onClick={() => navigate('/')}>← Trips</button>
         <div className="trip-title">

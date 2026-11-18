@@ -27,9 +27,12 @@ try {
   // Offline cache so the trip still opens without network; syncs when back online.
   firestore = initializeFirestore(app, {
     localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+    // Plain HTTP long-polling instead of a streaming connection: slightly slower, but works on
+    // mobile networks, proxies and antivirus software that silently break streaming.
+    experimentalForceLongPolling: true,
   });
 } catch {
-  firestore = initializeFirestore(app, {});
+  firestore = initializeFirestore(app, { experimentalForceLongPolling: true });
 }
 if (useEmulator) {
   connectFirestoreEmulator(firestore, '127.0.0.1', Number(env.VITE_EMULATOR_PORT || 8080));

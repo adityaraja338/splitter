@@ -329,3 +329,9 @@ input[type='checkbox'] { width: 18px; height: 18px; accent-color: var(--primary)
 }
 /* Hint that the people row scrolls sideways */
 .strip { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); padding-right: 24px; }
+
+.center { text-align: center; }
+.offline-banner {
+  background: #fef3c7; color: #78350f; border-radius: 10px; padding: 8px 12px; font-size: 0.85rem; margin-bottom: 12px;
+}
+@media (prefers-color-scheme: dark) { .offline-banner { background: #3b2f0b; color: #fde68a; } }

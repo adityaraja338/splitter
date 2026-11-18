@@ -47,7 +47,11 @@ export default function Home() {
       const newCode = await createTrip({ name, currency, people: names });
       navigate(`/t/${newCode}`);
     } catch (err) {
-      setError(err.message || 'Something went wrong');
+      setError(
+        /offline|unavailable|network/i.test(err.message || '')
+          ? "Can't reach the server. Check your internet connection and try again."
+          : err.message || 'Something went wrong',
+      );
       setBusy(false);
     }
   }
@@ -62,7 +66,11 @@ export default function Home() {
       if (await tripExists(c)) navigate(`/t/${c}`);
       else setJoinError('No trip found with that code');
     } catch (err) {
-      setJoinError(err.message || 'Could not look up that code');
+      setJoinError(
+        /offline|unavailable|network/i.test(err.message || '')
+          ? "Can't reach the server. Check your internet connection and try again."
+          : err.message || 'Could not look up that code',
+      );
     } finally {
       setBusy(false);
     }
