@@ -4,6 +4,7 @@ import { navigate } from '../router.js';
 import { normalizeCode } from '../logic.js';
 import { getRecent, forgetTrip } from '../storage.js';
 import { CURRENCIES } from './ui.jsx';
+import { InstallCard } from './Pwa.jsx';
 
 export default function Home() {
   const [name, setName] = useState('');
@@ -83,6 +84,8 @@ export default function Home() {
         <h1>Splitbox</h1>
         <p className="muted">Track shared trip expenses and see who owes whom. Free, no sign-up — just share the link.</p>
       </header>
+
+      <InstallCard />
 
       <form className="card" onSubmit={onJoin}>
         <h2>Open a trip</h2>

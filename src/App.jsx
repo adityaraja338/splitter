@@ -2,6 +2,7 @@ import { usePath } from './router.js';
 import { isConfigured } from './firebase.js';
 import Home from './components/Home.jsx';
 import Trip from './components/Trip.jsx';
+import { UpdatePrompt } from './components/Pwa.jsx';
 
 export default function App() {
   const path = usePath();
@@ -19,6 +20,10 @@ export default function App() {
     );
   }
   const m = path.match(/^\/t\/([A-Za-z0-9]+)\/?$/);
-  if (m) return <Trip key={m[1].toUpperCase()} code={m[1].toUpperCase()} />;
-  return <Home />;
+  return (
+    <>
+      {m ? <Trip key={m[1].toUpperCase()} code={m[1].toUpperCase()} /> : <Home />}
+      <UpdatePrompt />
+    </>
+  );
 }

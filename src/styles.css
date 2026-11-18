@@ -362,3 +362,18 @@ input[type='checkbox'] { width: 18px; height: 18px; accent-color: var(--primary)
   padding: 10px 12px; margin: 10px 0 4px;
 }
 .hint:hover { border-color: var(--primary); }
+
+/* PWA */
+.install-card { display: flex; align-items: center; gap: 12px; }
+.install-card img { border-radius: 10px; flex: none; }
+.ios-share { width: 16px; height: 16px; vertical-align: -3px; }
+.update-banner {
+  position: fixed; left: 50%; transform: translateX(-50%); top: calc(12px + env(safe-area-inset-top)); z-index: 40;
+  display: flex; align-items: center; gap: 10px; background: var(--card); color: var(--text);
+  border: 1px solid var(--border); border-radius: 14px; padding: 8px 8px 8px 14px; font-size: 0.9rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); width: max-content; max-width: calc(100% - 24px);
+}
+/* Installed app: respect the notch/status bar */
+@media (display-mode: standalone) {
+  .page { padding-top: calc(16px + env(safe-area-inset-top)); }
+}
