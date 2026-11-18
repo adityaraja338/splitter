@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "emulators": "firebase emulators:start --only firestore,hosting",
-    "deploy": "npm run build && firebase deploy --only hosting,firestore"
+    "deploy": "firebase deploy --only hosting,firestore"
   },
   "dependencies": {
     "firebase": "^13.4.0",

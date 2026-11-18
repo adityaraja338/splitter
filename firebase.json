@@ -7,6 +7,7 @@
     {
       "target": "app",
       "public": "dist",
+      "predeploy": ["npm run build", "node scripts/verify-dist.mjs"],
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [{ "source": "**", "destination": "/index.html" }],
       "headers": [
