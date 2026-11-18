@@ -12,6 +12,9 @@ The app isn't the point. What surprised me is how normal it felt to build it mid
 
 A tool going paid used to mean you paid or gave up. Now you can just make your own. That's the side of AI I find exciting: small everyday problems, solved by regular people.
 
+If your group needs one, it's free to use: splitbox.web.app
+And the code is open if you want to peek or host your own: github.com/adityaraja338/splitter
+
 Anyone else building little tools for themselves like this?
 
 #AI #ClaudeCode
