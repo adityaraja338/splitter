@@ -80,7 +80,7 @@ export default function Trip({ code }) {
   };
 
   const stats = useMemo(() => computeBalances(people, entries), [people, entries]);
-  const simplify = trip?.simplify === true;
+  const simplify = trip?.simplify !== false; // on unless a trip explicitly turned it off
   const settlements = useMemo(
     () => (simplify ? suggestSettlements(stats.balances) : pairwiseDebts(entries)),
     [simplify, stats, entries],
