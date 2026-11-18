@@ -1,26 +1,21 @@
-We were on our way to Zero Point, Sikkim. Winding mountain roads, a big group of friends, and the same question every trip ends with: who owes whom?
+So on our way to Zero Point in Sikkim, we hit the classic group trip problem. 12 of us, everyone paying for random stuff, and nobody had a clue who owed whom.
 
-We've always used Kittysplit for this. This time, the one feature we actually cared about, seeing who should pay whom, had gone behind a paywall.
+We usually use Kittysplit. Opened it, and the one feature we actually use, the "who pays whom" part, is now paid. Great timing.
 
-My first thought: this is a simple app, Claude Code could build it.
-My second thought: I don't have my laptop. And on those roads, the network could barely load WhatsApp. A PC wouldn't have helped much anyway.
+Honestly, it's not a complicated app. My first thought was, I'll just build one with Claude Code. Then I remembered I didn't have my laptop. And the network on those roads was so bad that even a laptop wouldn't have helped much.
 
-So I opened Claude on my phone, started a Claude Code session in the cloud, and just described what we needed. The heavy lifting happened on a cloud machine, so my patchy 4G only had to carry the conversation.
+So I tried it from my phone. Opened Claude, started a Claude Code session in the cloud, and explained what I wanted, pretty much the way I'd explain it to a friend. Since everything ran on a cloud machine, my phone only had to send messages back and forth, which even the hill network could (mostly) handle.
 
-A few hours later, between cab rides and Maggi stops, we had our own app:
-→ Firebase Hosting + Firestore, frontend only, no login
-→ Create a trip, share the link, everyone picks their name
-→ Add expenses, split equally, by exact amounts or by shares
-→ See exactly who pays whom, and mark it paid
+A few hours later we had our own little splitter. Create a trip, drop the link in the group, everyone picks their name and adds expenses. Split it equally, by exact amounts or by shares, and it tells you who pays whom. Firebase for hosting, Firestore for the data, no login, nothing fancy.
 
-The group was using it on the trip itself.
+The whole group ended up using it for the rest of the trip.
 
-What stuck with me isn't the app. It's how normal this felt.
+I'm not posting this because the app is special. It's a simple app. What surprised me is how normal it felt to build it in the middle of a trip, almost like booking a cab.
 
-Not long ago, "the tool went paid" meant you paid up or went back to a spreadsheet. Now, if a problem is simple enough to explain, it's often simple enough to build. From a phone, on a mountain road, on one bar of signal.
+A couple of years ago, if a tool went paid, you either paid or gave up. Now you can just make your own version. From your phone. In the back seat of a car.
 
-AI isn't just for engineers shipping products anymore. It's quietly becoming the thing you reach for when an everyday tool doesn't quite fit: small software, made for exactly your problem.
+That's the side of AI I find exciting. Not the big demos, just small everyday problems getting solved by regular people.
 
-What would you build for yourself if it only took an afternoon?
+Anyone else building little tools for themselves like this?
 
-#AI #ClaudeCode #BuildWithAI #Firebase
+#AI #ClaudeCode
