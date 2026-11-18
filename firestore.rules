@@ -7,11 +7,12 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     function validTrip(d) {
-      return d.keys().hasOnly(['name', 'currency', 'people', 'createdAt'])
+      return d.keys().hasOnly(['name', 'currency', 'people', 'createdAt', 'simplify'])
         && d.name is string && d.name.size() > 0 && d.name.size() <= 80
         && d.currency is string && d.currency.size() <= 6
         && d.people is list && d.people.size() <= 100
-        && d.createdAt is timestamp;
+        && d.createdAt is timestamp
+        && (!('simplify' in d) || d.simplify is bool);
     }
 
     function validParts(p) {

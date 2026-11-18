@@ -273,3 +273,10 @@ input[type='checkbox'] { width: 18px; height: 18px; accent-color: var(--primary)
   border: 2px dashed var(--border); color: var(--primary); font-weight: 700;
 }
 .strip-add:hover .add-circle { border-color: var(--primary); background: var(--primary-soft); }
+
+/* Your balance card */
+.summary-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 4px; }
+.summary-head h2 { margin: 0; }
+.my-summary { border-left: 4px solid var(--primary); }
+.group-label { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; margin: 12px 0 0; }
+.switch { display: flex; align-items: center; gap: 6px; cursor: pointer; font-weight: 600; white-space: nowrap; }

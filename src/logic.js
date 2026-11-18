@@ -165,3 +165,33 @@ export function isPersonUsed(personId, entries) {
       : e.paidBy === personId || (e.split?.parts && e.split.parts[personId]),
   );
 }
+
+/**
+ * Direct (un-simplified) debts: who owes whom based on who actually paid for what,
+ * netted per pair and reduced by recorded payments. Returns [{from, to, amount}].
+ */
+export function pairwiseDebts(entries) {
+  const owe = {}; // owe[a][b] = amount a owes b (before netting)
+  const add = (a, b, v) => {
+    if (a === b || !v) return;
+    owe[a] ??= {};
+    owe[a][b] = (owe[a][b] || 0) + v;
+  };
+  for (const e of entries) {
+    if (e.type === 'payment') add(e.to, e.from, e.amount); // paying back = the receiver now "owes" it back
+    else for (const [id, v] of Object.entries(expenseShares(e))) add(id, e.paidBy, v);
+  }
+  const out = [];
+  const seen = new Set();
+  for (const a of Object.keys(owe)) {
+    for (const b of Object.keys(owe[a])) {
+      const key = a < b ? `${a}|${b}` : `${b}|${a}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const net = (owe[a]?.[b] || 0) - (owe[b]?.[a] || 0);
+      if (net > 0) out.push({ from: a, to: b, amount: net });
+      else if (net < 0) out.push({ from: b, to: a, amount: -net });
+    }
+  }
+  return out.sort((x, y) => y.amount - x.amount);
+}

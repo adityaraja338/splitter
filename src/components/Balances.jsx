@@ -1,29 +1,27 @@
 import { useState } from 'react';
-import { addEntry } from '../api.js';
-import { suggestSettlements, formatMoney } from '../logic.js';
+import { updateTrip } from '../api.js';
+import { formatMoney } from '../logic.js';
+import { markPaid } from '../settle.js';
 import { Avatar } from './ui.jsx';
 
-export default function Balances({ people, byId, stats, me, currency, code, flash, onRecord }) {
+export default function Balances({ people, byId, stats, settlements, simplify, me, currency, code, flash, onRecord }) {
   const [busyKey, setBusyKey] = useState(null);
   const { balances, paid, spent } = stats;
-  const suggestions = suggestSettlements(balances);
+  const suggestions = settlements;
   const max = Math.max(1, ...Object.values(balances).map(Math.abs));
   const name = (id) => (id === me ? 'You' : byId[id]?.name || 'Someone');
 
   async function settle(s) {
-    const key = `${s.from}-${s.to}`;
-    if (!confirm(`Mark ${formatMoney(s.amount, currency)} from ${byId[s.from]?.name} to ${byId[s.to]?.name} as paid?`)) return;
-    setBusyKey(key);
+    setBusyKey(`${s.from}-${s.to}`);
+    await markPaid({ code, s, me, byId, currency, flash });
+    setBusyKey(null);
+  }
+
+  async function toggleSimplify() {
     try {
-      await addEntry(code, {
-        type: 'payment', from: s.from, to: s.to, amount: s.amount,
-        date: new Date().toLocaleDateString('en-CA'), note: '', createdBy: me || null,
-      });
-      flash('Marked as paid');
+      await updateTrip(code, { simplify: !simplify });
     } catch (e) {
       flash(`Failed: ${e.message}`);
-    } finally {
-      setBusyKey(null);
     }
   }
 
@@ -37,9 +35,9 @@ export default function Balances({ people, byId, stats, me, currency, code, flas
       <Avatar person={byId[s.from]} size={30} />
       <div className="grow">
         <div>
-          <strong>{name(s.from)}</strong> {s.from === me ? 'owe' : 'owes'} <strong>{name(s.to)}</strong>
+          <strong>{name(s.from)}</strong> {s.from === me ? 'owe' : 'owes'} <strong>{s.to === me ? 'you' : name(s.to)}</strong>
         </div>
-        <div className="amount neg">{formatMoney(s.amount, currency)}</div>
+        <div className={`amount ${s.to === me ? 'pos' : 'neg'}`}>{formatMoney(s.amount, currency)}</div>
       </div>
       <button className="btn small-btn" disabled={busyKey === `${s.from}-${s.to}`} onClick={() => settle(s)}>
         Mark paid
@@ -51,7 +49,18 @@ export default function Balances({ people, byId, stats, me, currency, code, flas
   return (
     <div>
       <section className="card">
-        <h2>How to settle up</h2>
+        <div className="summary-head">
+          <h2>Who owes whom</h2>
+          <label className="switch small">
+            <input type="checkbox" checked={simplify} onChange={toggleSimplify} />
+            <span>Simplify debts</span>
+          </label>
+        </div>
+        <p className="muted small">
+          {simplify
+            ? 'Fewest payments to settle everyone (debts may be passed along, e.g. you pay Carol instead of Bob).'
+            : 'Direct debts: each person pays back whoever actually paid for them.'}
+        </p>
         {suggestions.length === 0 ? (
           <p className="muted">🎉 Everyone is settled up.</p>
         ) : (

@@ -60,3 +60,27 @@ describe('codes', () => {
     expect(generateCode()).toMatch(/^[2-9A-Z]{8}$/);
   });
 });
+
+import { pairwiseDebts } from './logic.js';
+describe('pairwise debts', () => {
+  it('keeps direct debts and agrees with net balances', () => {
+    const people = [{ id: 'a' }, { id: 'b' }, { id: 'c' }];
+    const entries = [
+      { type: 'expense', amount: 3000, paidBy: 'a', split: { mode: 'equal', parts: { a: 1, b: 1, c: 1 } } },
+      { type: 'expense', amount: 600, paidBy: 'b', split: { mode: 'equal', parts: { b: 1, c: 1 } } },
+      { type: 'expense', amount: 400, paidBy: 'c', split: { mode: 'equal', parts: { a: 1, b: 1 } } },
+      { type: 'payment', from: 'b', to: 'a', amount: 500 },
+    ];
+    const d = pairwiseDebts(entries);
+    // b owes a 1000-500=500; c owes a 1000, a owes c 200 -> c owes a 800; c owes b 300, b owes c 200 -> c owes b 100
+    expect(d).toEqual([
+      { from: 'c', to: 'a', amount: 800 },
+      { from: 'b', to: 'a', amount: 500 },
+      { from: 'c', to: 'b', amount: 100 },
+    ]);
+    const { balances } = computeBalances(people, entries);
+    const net = { a: 0, b: 0, c: 0 };
+    for (const x of d) { net[x.from] -= x.amount; net[x.to] += x.amount; }
+    expect(net).toEqual(balances);
+  });
+});

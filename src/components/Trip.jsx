@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
 import { watchTrip, watchEntries } from '../api.js';
-import { computeBalances, formatMoney } from '../logic.js';
+import { computeBalances, formatMoney, suggestSettlements, pairwiseDebts } from '../logic.js';
 import { getMe, setMe as storeMe, rememberTrip } from '../storage.js';
 import { navigate } from '../router.js';
 import { Avatar, Toast } from './ui.jsx';
 import WhoAreYou from './WhoAreYou.jsx';
 import PeopleStrip from './PeopleStrip.jsx';
+import MySummary from './MySummary.jsx';
 import ExpenseList from './ExpenseList.jsx';
 import ExpenseForm from './ExpenseForm.jsx';
 import PaymentForm from './PaymentForm.jsx';
@@ -64,6 +65,11 @@ export default function Trip({ code }) {
   };
 
   const stats = useMemo(() => computeBalances(people, entries), [people, entries]);
+  const simplify = trip?.simplify !== false;
+  const settlements = useMemo(
+    () => (simplify ? suggestSettlements(stats.balances) : pairwiseDebts(entries)),
+    [simplify, stats, entries],
+  );
   const total = useMemo(() => entries.filter((e) => e.type !== 'payment').reduce((a, e) => a + e.amount, 0), [entries]);
 
   async function share() {
@@ -132,7 +138,7 @@ export default function Trip({ code }) {
                 <span>
                   <span className="small muted">You are {byId[meValid].name}</span>
                   <span className={`strong ${myBal > 0 ? 'pos' : myBal < 0 ? 'neg' : ''}`}>
-                    {myBal > 0 ? `you get back ${formatMoney(myBal, cur)}` : myBal < 0 ? `you owe ${formatMoney(-myBal, cur)}` : 'all settled'}
+                    {myBal > 0 ? `overall you get back ${formatMoney(myBal, cur)}` : myBal < 0 ? `overall you owe ${formatMoney(-myBal, cur)}` : 'all settled'}
                   </span>
                 </span>
               </>
@@ -151,6 +157,19 @@ export default function Trip({ code }) {
       </header>
 
       <main>
+        {tab === 'expenses' && people.length > 0 && (
+          <MySummary
+            me={meValid}
+            byId={byId}
+            settlements={settlements}
+            currency={cur}
+            code={code}
+            flash={flash}
+            onPickMe={() => setPicking(true)}
+            onEdit={(preset) => setEditing({ kind: 'payment', preset })}
+            onSeeAll={() => setTab('balances')}
+          />
+        )}
         {tab === 'expenses' && (
           <PeopleStrip people={people} me={meValid} balances={stats.balances} code={code} currency={cur} flash={flash} />
         )}
@@ -170,6 +189,8 @@ export default function Trip({ code }) {
             people={people}
             byId={byId}
             stats={stats}
+            settlements={settlements}
+            simplify={simplify}
             me={meValid}
             currency={cur}
             code={code}
