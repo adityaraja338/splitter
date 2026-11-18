@@ -6,9 +6,9 @@ import { Modal, Avatar } from './ui.jsx';
 const today = () => new Date().toLocaleDateString('en-CA'); // yyyy-mm-dd in local time
 
 const MODES = [
-  ['equal', 'Equally'],
-  ['exact', 'Exact amounts'],
-  ['shares', 'By shares'],
+  ['equal', 'Equal'],
+  ['exact', 'Exact'],
+  ['shares', 'Shares'],
 ];
 
 export default function ExpenseForm({ code, people, me, currency, entry, onClose, flash }) {
@@ -155,7 +155,7 @@ export default function ExpenseForm({ code, people, me, currency, entry, onClose
                   onChange={(e) => setIncluded({ ...included, [p.id]: e.target.checked })}
                 />
                 <Avatar person={p} size={26} />
-                <span className="grow">{p.name}</span>
+                <span className="grow ellipsis" title={p.name}>{p.name}</span>
               </label>
               {mode === 'exact' && included[p.id] && (
                 <div className="money-input small-input">

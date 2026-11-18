@@ -29,7 +29,8 @@ export default function Balances({ people, byId, stats, settlements, simplify, m
   if (!people.length) return <div className="empty"><p>Add people to see balances.</p></div>;
 
   return (
-    <div>
+    <div className="balances-grid">
+      <div className="col">
       <MySummary
         me={me}
         byId={byId}
@@ -67,18 +68,21 @@ export default function Balances({ people, byId, stats, settlements, simplify, m
                   </div>
                   <div className={`amount ${s.to === me ? 'pos' : 'neg'}`}>{formatMoney(s.amount, currency)}</div>
                 </div>
-                <button className="btn small-btn" disabled={busyKey === `${s.from}-${s.to}`} onClick={() => settle(s)}>
-                  Mark paid
-                </button>
-                <button className="icon-btn" title="Record a different amount" aria-label="Record a different amount" onClick={() => onRecord(s)}>✎</button>
+                <div className="row-actions">
+                  <button className="btn small-btn" disabled={busyKey === `${s.from}-${s.to}`} onClick={() => settle(s)}>
+                    Mark paid
+                  </button>
+                  <button className="icon-btn" title="Record a different amount" aria-label="Record a different amount" onClick={() => onRecord(s)}>✎</button>
+                </div>
               </li>
             ))}
           </ul>
         )}
         <button className="link-btn top-gap" onClick={() => onRecord(null)}>+ Record some other payment</button>
       </section>
+      </div>
 
-      <section className="card">
+      <section className="card col">
         <h2>Per person</h2>
         <ul className="list">
           {people.map((p) => {

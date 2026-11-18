@@ -33,7 +33,7 @@ export default function MySummary({ me, byId, settlements, currency, code, flash
     const other = byId[mine ? s.to : s.from];
     const key = `${s.from}-${s.to}`;
     return (
-      <li key={key} className="list-item">
+      <li key={key} className="list-item settle">
         <Avatar person={other} size={34} />
         <div className="grow">
           {mine ? (
@@ -43,10 +43,12 @@ export default function MySummary({ me, byId, settlements, currency, code, flash
           )}
           <div className={`amount ${mine ? 'neg' : 'pos'}`}>{formatMoney(s.amount, currency)}</div>
         </div>
-        <button className="btn small-btn" disabled={busy === key} onClick={() => settle(s)}>
-          {mine ? 'I paid' : 'Got it'}
-        </button>
-        <button className="icon-btn" title="Record a different amount" aria-label="Record a different amount" onClick={() => onEdit(s)}>✎</button>
+        <div className="row-actions">
+          <button className="btn small-btn" disabled={busy === key} onClick={() => settle(s)}>
+            {mine ? 'I paid' : 'Got it'}
+          </button>
+          <button className="icon-btn" title="Record a different amount" aria-label="Record a different amount" onClick={() => onEdit(s)}>✎</button>
+        </div>
       </li>
     );
   };

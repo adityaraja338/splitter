@@ -53,7 +53,7 @@ export default function People({ trip, code, entries, me, stats, flash, onPickMe
   }
 
   return (
-    <div>
+    <div className="people-grid">
       <section className="card">
         <h2>People</h2>
         <ul className="list">

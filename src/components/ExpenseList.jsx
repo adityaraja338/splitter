@@ -68,7 +68,7 @@ export default function ExpenseList({ entries, byId, me, currency, onOpen, onAdd
                 <li key={e.id} className="list-item clickable" onClick={() => onOpen(e)}>
                   <Avatar person={byId[e.paidBy] || { id: e.paidBy, name: '?' }} />
                   <div className="grow">
-                    <div className="strong">{e.title}</div>
+                    <div className="strong clamp-2" title={e.title}>{e.title}</div>
                     <div className="muted small">
                       {e.paidBy === me ? 'You' : name(e.paidBy)} paid · {n === Object.keys(byId).length ? 'everyone' : `${n} ${n === 1 ? 'person' : 'people'}`}
                       {e.split?.mode !== 'equal' && ` · ${e.split?.mode === 'exact' ? 'exact amounts' : 'by shares'}`}
