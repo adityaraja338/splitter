@@ -18,27 +18,18 @@ A free, no-sign-up trip expense splitter (in the spirit of Kittysplit). Frontend
 Amounts are stored as integer minor units (paise/cents) and split with largest-remainder rounding, so
 splits always add up exactly.
 
-## Setup
-
-1. Create a Firebase project at https://console.firebase.google.com
-2. **Build → Firestore Database → Create database** (production mode, any region).
-3. **Project settings → Your apps → Add app → Web**. Copy the config values.
-4. In this repo:
-   ```bash
-   npm install
-   cp .env.example .env      # paste the config values
-   # put your project id into .firebaserc ("default": "<project-id>")
-   npm run dev
-   ```
-
 ## Deploy
 
+The app is configured for Firebase project `splitter-61a04` (see `src/firebase.js` and `.firebaserc`).
+Firestore must already be created in that project (Build → Firestore Database).
+
 ```bash
+npm install
 npx firebase login
-npm run deploy     # builds, deploys hosting + firestore rules
+npm run deploy     # builds, then deploys hosting + firestore rules
 ```
 
-Your app will be live at `https://<project-id>.web.app`. The Spark (free) plan is plenty for this.
+Live at https://splitter-61a04.web.app. Re-run `npm run deploy` to publish changes.
 
 ## Local development without a Firebase project
 

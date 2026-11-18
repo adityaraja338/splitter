@@ -7,13 +7,15 @@ import {
 const env = import.meta.env;
 const useEmulator = env.VITE_USE_EMULATOR === 'true';
 
+// Firebase web config is public by design (it ships in the bundle); Firestore rules protect the data.
+// Any VITE_FIREBASE_* env var overrides these defaults, e.g. to point at a different project.
 const config = {
-  apiKey: env.VITE_FIREBASE_API_KEY,
-  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: env.VITE_FIREBASE_PROJECT_ID || (useEmulator ? 'demo-splitter' : undefined),
-  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: env.VITE_FIREBASE_APP_ID,
+  apiKey: env.VITE_FIREBASE_API_KEY || 'AIzaSyD75wHBAi4vTodKceXttByqdLWqMPa8mN4',
+  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN || 'splitter-61a04.firebaseapp.com',
+  projectId: env.VITE_FIREBASE_PROJECT_ID || (useEmulator ? 'demo-splitter' : 'splitter-61a04'),
+  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET || 'splitter-61a04.firebasestorage.app',
+  messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID || '523496592517',
+  appId: env.VITE_FIREBASE_APP_ID || '1:523496592517:web:d2e8ffcf2696262fb045ec',
 };
 
 export const isConfigured = Boolean(config.projectId);
