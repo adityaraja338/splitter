@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { createTrip, tripExists } from '../api.js';
 import { navigate } from '../router.js';
 import { normalizeCode } from '../logic.js';
@@ -14,13 +14,26 @@ export default function Home() {
   const [code, setCode] = useState('');
   const [joinError, setJoinError] = useState('');
   const [recent, setRecent] = useState(getRecent);
+  const focusRow = useRef(null);
+
+  // Move focus synchronously after the row renders, so fast typing never lands in the previous field
+  useLayoutEffect(() => {
+    if (focusRow.current !== null) {
+      document.querySelectorAll('.people-rows input')[focusRow.current]?.focus();
+      focusRow.current = null;
+    }
+  });
 
   const setPersonAt = (i, v) => {
     const next = [...people];
     next[i] = v;
-    if (i === next.length - 1 && v.trim()) next.push('');
     setPeople(next);
   };
+  const addPersonRow = () => {
+    focusRow.current = people.length;
+    setPeople([...people, '']);
+  };
+  const removePersonRow = (i) => setPeople(people.length > 1 ? people.filter((_, j) => j !== i) : ['']);
 
   async function onCreate(e) {
     e.preventDefault();
@@ -120,16 +133,37 @@ export default function Home() {
         </label>
         <div className="field">
           <span>People <span className="muted small">(you can add more later)</span></span>
-          {people.map((p, i) => (
-            <input
-              key={i}
-              value={p}
-              onChange={(e) => setPersonAt(i, e.target.value)}
-              placeholder={i === 0 ? 'Your name' : `Friend ${i}`}
-              maxLength={40}
-              className="stack"
-            />
-          ))}
+          <ul className="people-rows">
+            {people.map((p, i) => (
+              <li key={i}>
+                <input
+                  value={p}
+                  onChange={(e) => setPersonAt(i, e.target.value)}
+                  onKeyDown={(e) => {
+                    // Enter adds the next person instead of submitting the form
+                    if (e.key === 'Enter' && p.trim()) {
+                      e.preventDefault();
+                      if (i === people.length - 1) addPersonRow();
+                      else document.querySelectorAll('.people-rows input')[i + 1]?.focus();
+                    }
+                  }}
+                  placeholder={i === 0 ? 'Your name' : `Friend ${i}`}
+                  maxLength={40}
+                  aria-label={i === 0 ? 'Your name' : `Person ${i + 1}`}
+                />
+                <button
+                  type="button"
+                  className="icon-btn"
+                  onClick={() => removePersonRow(i)}
+                  aria-label={`Remove person ${i + 1}`}
+                  title="Remove"
+                >
+                  ✕
+                </button>
+              </li>
+            ))}
+          </ul>
+          <button type="button" className="link-btn add-row" onClick={addPersonRow}>+ Add person</button>
         </div>
         {error && <p className="error">{error}</p>}
         <button className="btn primary block" disabled={busy}>{busy ? 'Creating…' : 'Create trip'}</button>

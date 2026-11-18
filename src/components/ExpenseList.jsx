@@ -18,7 +18,7 @@ export default function ExpenseList({ entries, byId, me, currency, onOpen, onAdd
       <div className="empty">
         <div className="empty-icon">🧾</div>
         <p>No expenses yet.</p>
-        <button className="btn primary" onClick={onAdd}>{hasPeople ? 'Add the first expense' : 'Add people first'}</button>
+        {hasPeople ? <button className="btn primary" onClick={onAdd}>Add the first expense</button> : <p className="small">Add people above to get started.</p>}
       </div>
     );
   }

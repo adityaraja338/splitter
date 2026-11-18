@@ -5,6 +5,7 @@ import { getMe, setMe as storeMe, rememberTrip } from '../storage.js';
 import { navigate } from '../router.js';
 import { Avatar, Toast } from './ui.jsx';
 import WhoAreYou from './WhoAreYou.jsx';
+import PeopleStrip from './PeopleStrip.jsx';
 import ExpenseList from './ExpenseList.jsx';
 import ExpenseForm from './ExpenseForm.jsx';
 import PaymentForm from './PaymentForm.jsx';
@@ -151,13 +152,16 @@ export default function Trip({ code }) {
 
       <main>
         {tab === 'expenses' && (
+          <PeopleStrip people={people} me={meValid} balances={stats.balances} code={code} currency={cur} flash={flash} />
+        )}
+        {tab === 'expenses' && (
           <ExpenseList
             entries={entries}
             byId={byId}
             me={meValid}
             currency={cur}
             onOpen={(entry) => setEditing({ kind: entry.type === 'payment' ? 'payment' : 'expense', entry })}
-            onAdd={() => (people.length ? setEditing({ kind: 'expense' }) : setTab('people'))}
+            onAdd={() => setEditing({ kind: 'expense' })}
             hasPeople={people.length > 0}
           />
         )}
@@ -178,7 +182,7 @@ export default function Trip({ code }) {
         )}
       </main>
 
-      {tab === 'expenses' && people.length > 0 && (
+      {tab === 'expenses' && people.length > 0 && entries.length > 0 && (
         <button className="fab" onClick={() => setEditing({ kind: 'expense' })} aria-label="Add expense">＋ Add expense</button>
       )}
 
