@@ -19,7 +19,11 @@
     {
       "target": "legacy",
       "public": "dist",
-      "redirects": [{ "source": "/:path*", "destination": "https://splitbox.web.app/:path", "type": 302 }]
+      "redirects": [
+        { "source": "/", "destination": "https://splitbox.web.app/", "type": 302 },
+        { "regex": "^/(.*)$", "destination": "https://splitbox.web.app/:1", "type": 302 }
+      ],
+      "rewrites": [{ "source": "**", "destination": "/index.html" }]
     }
   ],
   "emulators": {
