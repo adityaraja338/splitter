@@ -8,6 +8,7 @@ export default function People({ trip, code, entries, me, stats, flash, onPickMe
   const [error, setError] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [editName, setEditName] = useState('');
+  const [editMode, setEditMode] = useState(false);
   const [tripName, setTripName] = useState(trip.name);
   const cur = trip.currency ?? '';
 
@@ -55,34 +56,48 @@ export default function People({ trip, code, entries, me, stats, flash, onPickMe
   return (
     <div className="people-grid">
       <section className="card">
-        <h2>People</h2>
-        <p className="muted small"><strong>Spent</strong> is each person's own share of the expenses. <strong>Paid</strong> is what they paid for the group.</p>
-        <ul className="list">
-          {trip.people.map((p) => (
-            <li key={p.id} className="list-item">
-              <Avatar person={p} />
-              {editingId === p.id ? (
-                <form className="row grow" onSubmit={(e) => { e.preventDefault(); saveRename(p.id); }}>
-                  <input value={editName} onChange={(e) => setEditName(e.target.value)} autoFocus maxLength={40} />
-                  <button className="btn small-btn">Save</button>
-                </form>
-              ) : (
-                <>
-                  <div className="grow">
-                    <div className="strong">{p.name}{p.id === me && <span className="muted small"> (you)</span>}</div>
-                    <div className="muted small nowrap">paid {formatMoney(stats.paid[p.id] || 0, cur)}</div>
-                  </div>
-                  <div className="right spent">
-                    <div className="amount">{formatMoney(stats.spent[p.id] || 0, cur)}</div>
-                    <div className="muted small">spent</div>
-                  </div>
-                  <button className="icon-btn" aria-label={`Rename ${p.name}`} title="Rename" onClick={() => { setEditingId(p.id); setEditName(p.name); }}>✎</button>
-                  <button className="icon-btn" aria-label={`Remove ${p.name}`} title="Remove" onClick={() => remove(p)}>🗑</button>
-                </>
-              )}
-            </li>
-          ))}
+        <div className="summary-head">
+          <h2>Cost per person</h2>
+          <button className="link-btn" onClick={() => { setEditMode(!editMode); setEditingId(null); }}>
+            {editMode ? 'Done' : 'Edit'}
+          </button>
+        </div>
+        <ul className="list cost-list">
+          {trip.people.map((p) => {
+            const cost = stats.spent[p.id] || 0;
+            return (
+              <li key={p.id} className="cost-row">
+                <Avatar person={p} size={36} />
+                {editingId === p.id ? (
+                  <form className="row grow" onSubmit={(e) => { e.preventDefault(); saveRename(p.id); }}>
+                    <input value={editName} onChange={(e) => setEditName(e.target.value)} autoFocus maxLength={40} aria-label="New name" />
+                    <button className="btn small-btn">Save</button>
+                  </form>
+                ) : (
+                  <>
+                    <span className="grow strong ellipsis">
+                      {p.name}{p.id === me && <span className="muted small"> (you)</span>}
+                    </span>
+                    {editMode ? (
+                      <span className="row-actions">
+                        <button className="icon-btn" aria-label={`Rename ${p.name}`} title="Rename" onClick={() => { setEditingId(p.id); setEditName(p.name); }}>✎</button>
+                        <button className="icon-btn" aria-label={`Remove ${p.name}`} title="Remove" onClick={() => remove(p)}>🗑</button>
+                      </span>
+                    ) : (
+                      <span className="cost-amt">{formatMoney(cost, cur)}</span>
+                    )}
+                  </>
+                )}
+              </li>
+            );
+          })}
         </ul>
+        {!editMode && trip.people.length > 0 && (
+          <div className="cost-total">
+            <span>Total</span>
+            <span>{formatMoney(Object.values(stats.spent).reduce((a, b) => a + b, 0), cur)}</span>
+          </div>
+        )}
         <form className="row top-gap" onSubmit={add}>
           <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Add a person" maxLength={40} />
           <button className="btn" disabled={!name.trim()}>Add</button>

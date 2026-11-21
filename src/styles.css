@@ -377,6 +377,14 @@ input[type='checkbox'] { width: 18px; height: 18px; accent-color: var(--primary)
 @media (display-mode: standalone) {
   .page { padding-top: calc(16px + env(safe-area-inset-top)); }
 }
-.spent { margin-right: 4px; }
 .nowrap { white-space: nowrap; }
-@media (max-width: 380px) { .people-grid .list-item { gap: 8px; } .people-grid .icon-btn { width: 32px; } }
+
+/* People tab: cost per person */
+.cost-row { display: flex; align-items: center; gap: 12px; min-height: 58px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.cost-row:last-child { border-bottom: 0; }
+.cost-amt { font-size: 1.1rem; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cost-total {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  margin: 4px 0 8px; padding-top: 12px; border-top: 2px solid var(--border);
+  font-weight: 800; font-size: 1.1rem; font-variant-numeric: tabular-nums;
+}
