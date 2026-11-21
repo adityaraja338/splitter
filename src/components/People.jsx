@@ -56,6 +56,7 @@ export default function People({ trip, code, entries, me, stats, flash, onPickMe
     <div className="people-grid">
       <section className="card">
         <h2>People</h2>
+        <p className="muted small"><strong>Spent</strong> is each person's own share of the expenses. <strong>Paid</strong> is what they paid for the group.</p>
         <ul className="list">
           {trip.people.map((p) => (
             <li key={p.id} className="list-item">
@@ -69,7 +70,11 @@ export default function People({ trip, code, entries, me, stats, flash, onPickMe
                 <>
                   <div className="grow">
                     <div className="strong">{p.name}{p.id === me && <span className="muted small"> (you)</span>}</div>
-                    <div className="muted small">balance {formatMoney(stats.balances[p.id] || 0, cur)}</div>
+                    <div className="muted small nowrap">paid {formatMoney(stats.paid[p.id] || 0, cur)}</div>
+                  </div>
+                  <div className="right spent">
+                    <div className="amount">{formatMoney(stats.spent[p.id] || 0, cur)}</div>
+                    <div className="muted small">spent</div>
                   </div>
                   <button className="icon-btn" aria-label={`Rename ${p.name}`} title="Rename" onClick={() => { setEditingId(p.id); setEditName(p.name); }}>✎</button>
                   <button className="icon-btn" aria-label={`Remove ${p.name}`} title="Remove" onClick={() => remove(p)}>🗑</button>

@@ -377,3 +377,6 @@ input[type='checkbox'] { width: 18px; height: 18px; accent-color: var(--primary)
 @media (display-mode: standalone) {
   .page { padding-top: calc(16px + env(safe-area-inset-top)); }
 }
+.spent { margin-right: 4px; }
+.nowrap { white-space: nowrap; }
+@media (max-width: 380px) { .people-grid .list-item { gap: 8px; } .people-grid .icon-btn { width: 32px; } }
